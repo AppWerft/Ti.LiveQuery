@@ -13,26 +13,49 @@ The module is heavy WIP and not ready for production.
 ## Use the module
 
 ```javascript
-var PaLiQ = require("de.appwerft.parselivequery");
-PaLiQ.setEndpoint({
+var PLQ = require("de.appwerft.parselivequery");
+
+PLQ.setEndpoint({
 	uri :"wss://myparseinstance.com"), 
 	applicationId : APPLICATION_ID
 	clientKey : CLIENT_KEY
-PaLiQ.loginAnonymous({
-	onsuccess : function() {
-		var query = PaLiQ.createObject("Bird");
-		query.save({
-			data : JSON-Object
-			onsuccess : function() {},
-			onerror : function(){}
-		});
-		query.load({
-			onsuccess : function() {},
-			onerror : function(){}
-		})	
+PLQ.loginAnonymous({
+	onsuccess : queryFn,
+	onerror : function(){}
 	}
 });
 
+var query = PLQ.createQuery([{
+	key : "age",
+	condition : "greater",
+	value : 1
+ },{
+	key : "color",
+	condition : "equal",
+	value : "brown"
+}]);
+
+function queryFn() {
+	var bird = PaLiQ.createObject("Bird");
+	bird.save({
+		data : JSON-Object
+		onsuccess : function() {},
+		onerror : function(){}
+	});
+	bird.query({
+		query : query,
+		onload : function() {},
+		onerror : function(){}
+	});
+	bird.register({
+		query : query,
+		onchange : function() {},
+		onerror : function(){}
+	});
+	bird.unregister({
+		onchange : function() {},
+		onerror : function(){}
+	});
+}
 
 ```
-_Currently I see a problem in implementation of module: Parse uses Messages for payload. The messages must be a real class with settern and gettern, a KrollDict is not enough …_
