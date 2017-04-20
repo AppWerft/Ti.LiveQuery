@@ -18,9 +18,11 @@ PaLiQ.setEndpoint({
 	uri :"wss://myparseinstance.com"), 
 	applicationId : APPLICATIONID
 
-PaLiQ.createQuery({
-	onevent : function() {
-	}
-});
+var query = PaLiQ.createQuery();
+query.post({
+	data : JSON-Object
+	onsuccess : function() {},
+	onerror : function(){}
+})
 ```
 Alternativly to `setEnpoint()` you can set a property in tiapp.xml with key `PARSE_ENDPOINT`.
