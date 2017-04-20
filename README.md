@@ -25,37 +25,36 @@ PLQ.loginAnonymous({
 	}
 });
 
-var query = PLQ.createQuery([{
-	key : "age",
-	condition : "greater",
-	value : 1
- },{
-	key : "color",
-	condition : "equal",
-	value : "brown"
-}]);
 
 function queryFn() {
-	var bird = PaLiQ.createObject("Bird");
+	
+	var bird = PLQ.createObject("Bird");
+	
 	bird.save({
 		data : JSON-Object
 		onsuccess : function() {},
 		onerror : function(){}
 	});
-	bird.query({
-		query : query,
+	var query = PLQ.createQuery([{
+		key : "age",
+		condition : ">",
+		value : 1
+ 	},{
+		key : "color",
+		condition : "==",
+		value : "brown"
+	}]);
+	// pull request
+	query.load({
 		onload : function() {},
 		onerror : function(){}
 	});
-	bird.register({
-		query : query,
+	// live request
+	query.register({
 		onchange : function() {},
 		onerror : function(){}
 	});
-	bird.unregister({
-		onchange : function() {},
-		onerror : function(){}
-	});
+	query.unregister();
 }
 
 ```
