@@ -87,17 +87,16 @@ public class ParselivequeryModule extends KrollModule {
 
 	@Kroll.method
 	void loginAnonymous(KrollDict opts) {
-		KrollFunction onSuccess = (KrollFunction) opts.get("onsuccess");
-		KrollFunction onError = (KrollFunction) opts.get("onerror");
+		KrollCallbacks kcb = new KrollCallbacks(opts);
 		ParseAnonymousUtils.logIn(new LogInCallback() {
 			@Override
 			public void done(ParseUser user, ParseException e) {
 				KrollDict res = new KrollDict();
 				if (e != null) {
 					res.put("user", user.toString());
-					onSuccess.call(getKrollObject(), res);
+					kcb.onSuccess.call(getKrollObject(), res);
 				} else {
-					onError.call(getKrollObject(), res);
+					kcb.onError.call(getKrollObject(), res);
 				}
 			}
 		});
