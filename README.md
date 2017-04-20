@@ -14,7 +14,9 @@ The module is heavy WIP and not ready for production.
 
 ```javascript
 var PaLiQ = require("de.appwerft.parselivequery");
-PaLiQ.setEndpoint("wss://myparseinstance.com"); // optional, you can use tiapp.xml for setting
+PaLiQ.setEndpoint({
+	uri :"wss://myparseinstance.com"), 
+	applicationId : APPLICATIONID
 
 PaLiQ.createQuery({
 	onevent : function() {
