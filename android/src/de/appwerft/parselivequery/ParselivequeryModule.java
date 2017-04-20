@@ -8,10 +8,8 @@
  */
 package de.appwerft.parselivequery;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
@@ -25,15 +23,13 @@ import android.content.Context;
 
 import com.parse.Parse;
 import com.parse.ParseLiveQueryClient;
-import com.parse.interceptors.ParseLogInterceptor;
 
 @Kroll.module(name = "Parselivequery", id = "de.appwerft.parselivequery")
 public class ParselivequeryModule extends KrollModule {
 
 	// Standard Debugging variables
-	private static final String LCAT = "ParselivequeryModule";
-	private static final boolean DBG = TiConfig.LOGD;
-	ParseLiveQueryClient parseLiveQueryClient;
+	private static final String LCAT = "PLQ";
+	ParseLiveQueryClient plqClient;
 	Context ctx;
 
 	// You can define constants with @Kroll.constant, for example:
@@ -54,9 +50,13 @@ public class ParselivequeryModule extends KrollModule {
 	@Kroll.method
 	public boolean setEndpoint(@Kroll.argument(optional = true) KrollDict opts) {
 		String applicationId = null;
+		String clientKey = null;
 		if (opts != null) {
 			if (opts.containsKeyAndNotNull("applicationId")) {
 				applicationId = opts.getString("applicationId");
+			}
+			if (opts.containsKeyAndNotNull("clientKey")) {
+				clientKey = opts.getString("clientKey");
 			}
 			if (opts.containsKeyAndNotNull(TiC.PROPERTY_URI)) {
 				try {
@@ -64,12 +64,10 @@ public class ParselivequeryModule extends KrollModule {
 					URI dummy = new URI(opts.getString(TiC.PROPERTY_URI));
 					// first we need Parse client
 					Parse.initialize(new Parse.Configuration.Builder(ctx)
-							.applicationId(applicationId)
-							// .addNetworkInterceptor(new ParseLogInterceptor())
+							.applicationId(applicationId).clientKey(clientKey)
 							.server(opts.getString(TiC.PROPERTY_URI)).build());
 					// and a parseLiveQueryClient
-					parseLiveQueryClient = ParseLiveQueryClient.Factory
-							.getClient();
+					plqClient = ParseLiveQueryClient.Factory.getClient();
 					return true;
 				} catch (URISyntaxException e) {
 					e.printStackTrace();

@@ -13,6 +13,7 @@ import com.parse.SubscriptionHandling;
 public class QueryProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
+	private ParseQuery<Message> query;
 
 	// Constructor
 	public QueryProxy() {
@@ -22,24 +23,6 @@ public class QueryProxy extends KrollProxy {
 	@Override
 	public void handleCreationDict(KrollDict options) {
 		super.handleCreationDict(options);
-		ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
-
-	}
-
-	@Kroll.method
-	public void printMessage(String message) {
-		Log.d(LCAT, "printing message: " + message);
-	}
-
-	@Kroll.getProperty
-	@Kroll.method
-	public String getMessage() {
-		return "Hello World from my module";
-	}
-
-	@Kroll.setProperty
-	@Kroll.method
-	public void setMessage(String message) {
-		Log.d(LCAT, "Tried setting module message to: " + message);
+		query = ParseQuery.getQuery(Message.class);
 	}
 }
