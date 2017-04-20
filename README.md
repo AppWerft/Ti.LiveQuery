@@ -20,7 +20,7 @@ PaLiQ.setEndpoint({
 	clientKey : CLIENT_KEY
 PaLiQ.loginAnonymous({
 	onsuccess : function() {
-		var query = PaLiQ.createQuery();
+		var query = PaLiQ.createObject("Bird");
 		query.save({
 			data : JSON-Object
 			onsuccess : function() {},

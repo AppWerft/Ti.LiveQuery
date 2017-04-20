@@ -21,11 +21,13 @@ import com.parse.SubscriptionHandling;
 public class QueryProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
-	private ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
+	private ParseQuery<GenericClass> query = ParseQuery
+			.getQuery(GenericClass.class);
 	static final String USER_ID_KEY = "userId";
 
 	static final String BODY_KEY = "body";
 	static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
+	private String CLASSNAME;
 
 	// Constructor
 	public QueryProxy() {
@@ -34,7 +36,8 @@ public class QueryProxy extends KrollProxy {
 
 	@Override
 	public void handleCreationDict(KrollDict opts) {
-
+		if (opts.containsKeyAndNotNull("CLASSNAME"))
+			CLASSNAME = opts.getString("CLASSNAME");
 		super.handleCreationDict(opts);
 	}
 
@@ -63,15 +66,15 @@ public class QueryProxy extends KrollProxy {
 	void load(KrollDict opts) {
 		KrollFunction onSuccess = (KrollFunction) opts.get("onsuccess");
 		KrollFunction onError = (KrollFunction) opts.get("onerror");
-		ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
+		ParseQuery<Object> query = ParseQuery.getQuery(Object.class);
 		query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
 		// get the latest 50 messages, order will show up newest to oldest of
 		// this group
 		query.orderByDescending("createdAt");
 		// Execute query to fetch all messages from Parse asynchronously
 		// This is equivalent to a SELECT query with SQL
-		query.findInBackground(new FindCallback<Message>() {
-			public void done(List<Message> messages, ParseException e) {
+		query.findInBackground(new FindCallback<Object>() {
+			public void done(List<Object> messages, ParseException e) {
 				if (e == null) {
 					KrollDict res = new KrollDict();
 					res.put("messages", messages.toArray());

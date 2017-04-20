@@ -3,10 +3,18 @@ package de.appwerft.parselivequery;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
-@ParseClassName("Message")
-public class Message extends ParseObject {
+@ParseClassName("GenericClass")
+public class GenericClass extends ParseObject {
 	public static final String USER_ID_KEY = "userId";
 	public static final String BODY_KEY = "body";
+
+	public String getCLASSNAME() {
+		return getString("CLASSNAME");
+	}
+
+	public void setCLASSNAME(String CLASSNAME) {
+		put("CLASSNAME", CLASSNAME);
+	}
 
 	public String getUserId() {
 		return getString(USER_ID_KEY);
