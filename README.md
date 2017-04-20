@@ -13,13 +13,13 @@ The module is heavy WIP and not ready for production.
 ## Use the module
 
 ```javascript
-var PLQ = require("de.appwerft.parselivequery");
+var Parse = require("de.appwerft.parselivequery");
 
-PLQ.setEndpoint({
+Parse.setEndpoint({
 	uri :"wss://myparseinstance.com"), 
 	applicationId : APPLICATION_ID
 	clientKey : CLIENT_KEY
-PLQ.loginAnonymous({
+Parse.loginAnonymous({
 	onsuccess : queryFn,
 	onerror : function(){}
 	}
@@ -28,14 +28,14 @@ PLQ.loginAnonymous({
 
 function queryFn() {
 	
-	var bird = PLQ.createObject("Bird");
+	var bird = Parse.createObject("Bird");
 	
 	bird.save({
 		data : JSON-Object
 		onsuccess : function() {},
 		onerror : function(){}
 	});
-	var query = PLQ.createQuery([{
+	var query = Parse.createQuery([{
 		key : "age",
 		condition : ">",
 		value : 1
@@ -44,12 +44,12 @@ function queryFn() {
 		condition : "==",
 		value : "brown"
 	}]);
-	// pull request
+	// pull request:
 	query.load({
 		onload : function() {},
 		onerror : function(){}
 	});
-	// live request
+	// live request:
 	query.register({
 		onchange : function() {},
 		onerror : function(){}
