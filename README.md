@@ -16,11 +16,14 @@ The module is heavy WIP and not ready for production.
 var PaLiQ = require("de.appwerft.parselivequery");
 PaLiQ.setEndpoint({
 	uri :"wss://myparseinstance.com"), 
-	applicationId : APPLICATIONID
+	applicationId : APPLICATION_ID
+	clientKey : CLIENT_KEY
 
-PaLiQ.createQuery({
-	onevent : function() {
-	}
-});
+var query = PaLiQ.createQuery();
+query.post({
+	data : JSON-Object
+	onsuccess : function() {},
+	onerror : function(){}
+})
 ```
-Alternativly to `setEnpoint()` you can set a property in tiapp.xml with key `PARSE_ENDPOINT`.
+_Currently I see a problem in implementation of module: Parse uses Messages for payload. The messages must be a real class with settern and gettern, a KrollDict is not enough …_
