@@ -8,15 +8,17 @@ Suppose you are building an app that allows multiple users to edit the same file
 
 To solve this problem, we introduce Parse LiveQuery. This tool allows you to subscribe to a `ParseQuery` you are interested in. Once subscribed, the server will notify clients whenever a `ParseObject` that matches the `ParseQuery` is created or updated, in real-time.
 
+The module is heavy WIP and not ready for production.
+
 ## Use the module
 
-```
+```javascript
 var PaLiQ = require("de.appwerft.parselivequery");
-PaLiQ.init("wss://myparseinstance.com");
+PaLiQ.setEndpoint("wss://myparseinstance.com"); // optional, you can use tiapp.xml for setting
 
 PaLiQ.createQuery({
 	onevent : function() {
 	}
 });
-
 ```
+Alternativly to `setEnpoint()` you can set a property in tiapp.xml with key `PARSE_ENDPOINT`.
