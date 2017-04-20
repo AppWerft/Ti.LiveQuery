@@ -12,7 +12,7 @@ The module is heavy WIP and not ready for production.
 
 ## Use the module
 
-```
+```javascript
 var PaLiQ = require("de.appwerft.parselivequery");
 PaLiQ.setEndpoint("wss://myparseinstance.com"); // optional, you can use tiapp.xml for setting
 
