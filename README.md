@@ -16,7 +16,8 @@ The module is heavy WIP and not ready for production.
 var PaLiQ = require("de.appwerft.parselivequery");
 PaLiQ.setEndpoint({
 	uri :"wss://myparseinstance.com"), 
-	applicationId : APPLICATIONID
+	applicationId : APPLICATION_ID
+	clientKey : CLIENT_KEY
 
 var query = PaLiQ.createQuery();
 query.post({
