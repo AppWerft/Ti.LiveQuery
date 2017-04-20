@@ -34,9 +34,10 @@ function queryFn() {
 		onerror : function(){}
 	});
 	var query = Parse.createQuery({
-		name : "Bird"
+		name : "Bird",
+		query : "age>1,color==brown,orderby desc age"
 	});
-	query.add("age>1").add("color==brown").add("orderby age");
+	
 	// pull request:
 	query.load({
 		onload : function() {},

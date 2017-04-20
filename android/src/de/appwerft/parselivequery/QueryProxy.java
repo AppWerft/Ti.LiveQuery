@@ -36,14 +36,55 @@ public class QueryProxy extends KrollProxy {
 	@Override
 	public void handleCreationDict(KrollDict opts) {
 		String name = null;
+		String queryString;
 		if (opts.containsKeyAndNotNull("name"))
 			name = opts.getString("name");
+		if (opts.containsKeyAndNotNull("name")) {
+			queryString = opts.getString("query");
+			String[] conditions = queryString.split("/,/");
+			for (int i = 0; i < conditions.length; i++) {
+				String condition = conditions[i];
+				if (condition.contains("==")) {
+					String[] parts = condition.split("==");
+					query = query.whereEqualTo(parts[0], parts[1]);
+				}
+				if (condition.contains("!=")) {
+					String[] parts = condition.split("!=");
+					query = query.whereNotEqualTo(parts[0], parts[1]);
+				}
+				if (condition.contains(">")) {
+					String[] parts = condition.split(">");
+					query = query.whereGreaterThan(parts[0], parts[1]);
+				}
+				if (condition.contains("<")) {
+					String[] parts = condition.split("<");
+					query = query.whereLessThan(parts[0], parts[1]);
+				}
+				if (condition.contains(">=")) {
+					String[] parts = condition.split(">=");
+					query = query.whereGreaterThanOrEqualTo(parts[0], parts[1]);
+				}
+				if (condition.contains("<=")) {
+					String[] parts = condition.split("<=");
+					query = query.whereLessThanOrEqualTo(parts[0], parts[1]);
+				}
+				if (condition.contains("exists ")) {
+					String value = condition.replace("exists ", "");
+					query = query.whereExists(value);
+				}
+				if (condition.contains("notexists ")) {
+					String value = condition.replace("notexists ", "");
+					query = query.whereDoesNotExist(value);
+				}
+				if (condition.contains("orderby ")) {
+					String[] parts = condition.split(" ");
+					if (parts[1].equals("asc"))
+						query = query.orderByAscending(parts[2]);
+					if (parts[1].equals("desc"))
+						query = query.orderByDescending(parts[2]);
+				}
+			}
+		}
 		super.handleCreationDict(opts);
-		this.query = new ParseQuery(name);
-	}
-
-	@Kroll.method
-	public QueryProxy add(String condition) {
-		return new QueryProxy(query.whereEqualTo("key", "value"));
 	}
 }
