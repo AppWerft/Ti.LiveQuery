@@ -12,7 +12,7 @@ To solve this problem, we introduce Parse LiveQuery. This tool allows you to sub
 
 ```
 var PaLiQ = require("de.appwerft.parselivequery");
-PaLiQ.init("wss://myparseinstance.com");
+PaLiQ.setEndpoint("wss://myparseinstance.com");
 
 PaLiQ.createQuery({
 	onevent : function() {
