@@ -27,23 +27,13 @@ Parse.loginAnonymous({
 
 
 function queryFn() {
-	
 	var bird = Parse.createObject("Bird");
-	
 	bird.save({
 		data : JSON-Object
 		onsuccess : function() {},
 		onerror : function(){}
 	});
-	var query = Parse.createQuery([{
-		key : "age",
-		condition : ">",
-		value : 1
- 	},{
-		key : "color",
-		condition : "==",
-		value : "brown"
-	}]);
+	var query = Parse.createQuery(["age > 1","color = brown"] // white spaces are very important for parsing!!!
 	// pull request:
 	query.load({
 		onload : function() {},
