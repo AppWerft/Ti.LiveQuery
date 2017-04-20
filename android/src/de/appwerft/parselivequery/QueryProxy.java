@@ -64,13 +64,23 @@ public class QueryProxy extends KrollProxy {
 
 	@Kroll.method
 	void load(KrollDict opts) {
-		KrollFunction onSuccess = (KrollFunction) opts.get("onsuccess");
-		KrollFunction onError = (KrollFunction) opts.get("onerror");
+		KrollFunction onSuccess;
+		KrollFunction onError;
+		if (opts.containsKeyAndNotNull("onsuccess"))
+			onSuccess = (KrollFunction) opts.get("onsuccess");
+		else
+			onSuccess = null;
+		if (opts.containsKeyAndNotNull("onerror"))
+			onError = (KrollFunction) opts.get("onerror");
+		else
+			onError = null;
+
 		ParseQuery<Object> query = ParseQuery.getQuery(Object.class);
 		query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
 		// get the latest 50 messages, order will show up newest to oldest of
 		// this group
 		query.orderByDescending("createdAt");
+		query.whereEqualTo("CLASSNAME", CLASSNAME);
 		// Execute query to fetch all messages from Parse asynchronously
 		// This is equivalent to a SELECT query with SQL
 		query.findInBackground(new FindCallback<Object>() {
@@ -78,16 +88,13 @@ public class QueryProxy extends KrollProxy {
 				if (e == null) {
 					KrollDict res = new KrollDict();
 					res.put("messages", messages.toArray());
-					onSuccess.call(getKrollObject(), res);
+					if (onSuccess != null)
+						onSuccess.call(getKrollObject(), res);
 				} else {
 
 					Log.e("message", "Error Loading Messages" + e);
-
 				}
-
 			}
-
 		});
-
 	}
 }
