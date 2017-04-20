@@ -21,6 +21,8 @@ import org.appcelerator.kroll.common.TiConfig;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
 
+import android.content.Context;
+
 import com.parse.Parse;
 import com.parse.ParseLiveQueryClient;
 import com.parse.interceptors.ParseLogInterceptor;
@@ -32,12 +34,14 @@ public class ParselivequeryModule extends KrollModule {
 	private static final String LCAT = "ParselivequeryModule";
 	private static final boolean DBG = TiConfig.LOGD;
 	ParseLiveQueryClient parseLiveQueryClient;
+	Context ctx;
 
 	// You can define constants with @Kroll.constant, for example:
 	// @Kroll.constant public static final String EXTERNAL_NAME = value;
 
 	public ParselivequeryModule() {
 		super();
+		ctx = TiApplication.getInstance().getBaseContext();
 	}
 
 	@Kroll.onAppCreate
@@ -49,7 +53,6 @@ public class ParselivequeryModule extends KrollModule {
 
 	@Kroll.method
 	public boolean setEndpoint(@Kroll.argument(optional = true) KrollDict opts) {
-		String uri = null;
 		String applicationId = null;
 		if (opts != null) {
 			if (opts.containsKeyAndNotNull("applicationId")) {
@@ -59,14 +62,14 @@ public class ParselivequeryModule extends KrollModule {
 				try {
 					@SuppressWarnings("unused")
 					URI dummy = new URI(opts.getString(TiC.PROPERTY_URI));
-					Parse.initialize(new Parse.Configuration.Builder(
-							TiApplication.getInstance().getBaseContext())
+					// first we need Parse client
+					Parse.initialize(new Parse.Configuration.Builder(ctx)
 							.applicationId(applicationId)
 							// .addNetworkInterceptor(new ParseLogInterceptor())
-							.server(uri).build());
-
+							.server(opts.getString(TiC.PROPERTY_URI)).build());
+					// and a parseLiveQueryClient
 					parseLiveQueryClient = ParseLiveQueryClient.Factory
-							.getClient(new URI(opts.getString(TiC.PROPERTY_URI)));
+							.getClient();
 					return true;
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
