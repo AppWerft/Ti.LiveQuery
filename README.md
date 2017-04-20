@@ -33,7 +33,7 @@ function queryFn() {
 		onsuccess : function() {},
 		onerror : function(){}
 	});
-	var query = Parse.createQuery(["age > 1","color = brown"] // white spaces are very important for parsing!!!
+	var query = Parse.createQuery("age > 1,color == brown,orderby age" // white spaces are very important for parsing!!!
 	// pull request:
 	query.load({
 		onload : function() {},
