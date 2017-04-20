@@ -39,7 +39,7 @@ public class QueryProxy extends KrollProxy {
 	}
 
 	@Kroll.method
-	public void post(KrollDict opts) {
+	public void save(KrollDict opts) {
 		KrollDict data = opts.getKrollDict("data");
 		KrollFunction onSuccess = (KrollFunction) opts.get("onsuccess");
 		KrollFunction onError = (KrollFunction) opts.get("onerror");
@@ -60,7 +60,7 @@ public class QueryProxy extends KrollProxy {
 	}
 
 	@Kroll.method
-	void refreshMessages(KrollDict opts) {
+	void load(KrollDict opts) {
 		KrollFunction onSuccess = (KrollFunction) opts.get("onsuccess");
 		KrollFunction onError = (KrollFunction) opts.get("onerror");
 		ParseQuery<Message> query = ParseQuery.getQuery(Message.class);

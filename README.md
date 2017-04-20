@@ -18,12 +18,21 @@ PaLiQ.setEndpoint({
 	uri :"wss://myparseinstance.com"), 
 	applicationId : APPLICATION_ID
 	clientKey : CLIENT_KEY
+PaLiQ.loginAnonymous({
+	onsuccess : function() {
+		var query = PaLiQ.createQuery();
+		query.save({
+			data : JSON-Object
+			onsuccess : function() {},
+			onerror : function(){}
+		});
+		query.load({
+			onsuccess : function() {},
+			onerror : function(){}
+		})	
+	}
+});
 
-var query = PaLiQ.createQuery();
-query.post({
-	data : JSON-Object
-	onsuccess : function() {},
-	onerror : function(){}
-})
+
 ```
 _Currently I see a problem in implementation of module: Parse uses Messages for payload. The messages must be a real class with settern and gettern, a KrollDict is not enough …_

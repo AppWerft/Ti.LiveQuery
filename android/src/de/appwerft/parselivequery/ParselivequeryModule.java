@@ -12,6 +12,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
@@ -21,8 +22,12 @@ import org.appcelerator.titanium.TiC;
 
 import android.content.Context;
 
+import com.parse.LogInCallback;
 import com.parse.Parse;
+import com.parse.ParseAnonymousUtils;
+import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
+import com.parse.ParseUser;
 
 @Kroll.module(name = "Parselivequery", id = "de.appwerft.parselivequery")
 public class ParselivequeryModule extends KrollModule {
@@ -76,8 +81,26 @@ public class ParselivequeryModule extends KrollModule {
 			}
 
 		} else
-			parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+			plqClient = ParseLiveQueryClient.Factory.getClient();
 		return true;
+	}
+
+	@Kroll.method
+	void loginAnonymous(KrollDict opts) {
+		KrollFunction onSuccess = (KrollFunction) opts.get("onsuccess");
+		KrollFunction onError = (KrollFunction) opts.get("onerror");
+		ParseAnonymousUtils.logIn(new LogInCallback() {
+			@Override
+			public void done(ParseUser user, ParseException e) {
+				KrollDict res = new KrollDict();
+				if (e != null) {
+					res.put("user", user.toString());
+					onSuccess.call(getKrollObject(), res);
+				} else {
+					onError.call(getKrollObject(), res);
+				}
+			}
+		});
 	}
 
 }
