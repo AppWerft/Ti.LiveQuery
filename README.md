@@ -8,12 +8,14 @@ Suppose you are building an app that allows multiple users to edit the same file
 
 To solve this problem, we introduce Parse LiveQuery. This tool allows you to subscribe to a `ParseQuery` you are interested in. Once subscribed, the server will notify clients whenever a `ParseObject` that matches the `ParseQuery` is created or updated, in real-time.
 
-##Use the module
+## Use the module
 
 ```
 var PaLiQ = require("de.appwerft.parselivequery");
+PaLiQ.init("wss://myparseinstance.com");
+
 PaLiQ.createQuery({
-	onchange : function() {
+	onevent : function() {
 	}
 });
 
