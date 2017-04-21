@@ -73,16 +73,16 @@ public class QueryProxy extends KrollProxy {
 					String[] parts = condition.split("\\s*<=\\s*");
 					query = query.whereLessThanOrEqualTo(parts[0], parts[1]);
 				}
-				if (condition.contains("limit ")) {
-					String value = condition.replace("limit ", "");
-					query = query.setLimit(Integer.parseInt(value));
+				if (condition.matches("limit\\s+[0-9]+")) {
+					String[] parts = condition.split("\\s+");
+					query = query.setLimit(Integer.parseInt(parts[1]));
 				}
-				if (condition.contains("exists ")) {
-					String value = condition.replace("exists ", "");
+				if (condition.matches("exists\\s+(.*?)")) {
+					String value = condition.replace("exists\\s+", "");
 					query = query.whereExists(value);
 				}
-				if (condition.contains("notexists ")) {
-					String value = condition.replace("notexists ", "");
+				if (condition.matches("notexists\\s+(.*?)")) {
+					String value = condition.replace("notexists\\s+", "");
 					query = query.whereDoesNotExist(value);
 				}
 				if (condition.contains("orderby ")) {

@@ -19,6 +19,7 @@ Parse.setEndpoint({
 	uri :"wss://myparseinstance.com"), 
 	applicationId : APPLICATION_ID
 	clientKey : CLIENT_KEY
+});	
 Parse.loginAnonymous({
 	onsuccess : WorkingWithParse,
 	onerror : function(){}

@@ -40,6 +40,7 @@ public class ObjectProxy extends KrollProxy {
 	public void handleCreationArgs(KrollModule createdInModule, Object[] args) {
 		if (args.length == 1 && args[0] instanceof String) {
 			CLASSNAME = (String) args[0];
+			Log.d(LCAT, "class " + (String) args[0] + " created");
 		}
 	}
 
