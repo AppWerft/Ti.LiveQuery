@@ -30,6 +30,7 @@ Parse.login({
 	onsuccess : WorkingWithParse,
 	onerror : function(){}
 });
+Parse.logout();
 
 function WorkingWithParse() {
 	var bird = Parse.createObject("Bird");

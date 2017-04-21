@@ -11,6 +11,7 @@ import org.appcelerator.kroll.common.Log;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -24,8 +25,6 @@ import de.appwerft.parselivequery.utils.GenericClass;
 public class ObjectProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
-
-	public ParseQuery<ParseObject> query;
 
 	static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
 	private String CLASSNAME;
@@ -67,6 +66,7 @@ public class ObjectProxy extends KrollProxy {
 	// querying of parse:
 	@Kroll.method
 	public void find(KrollDict opts) {
+		ParseQuery<ParseObject> query;
 		// importing of callbacks:
 		KrollCallbacks kcb = new KrollCallbacks(opts);
 		// importingof query proxy
@@ -74,8 +74,34 @@ public class ObjectProxy extends KrollProxy {
 			Object o = opts.get(ParselivequeryModule.QUERY);
 			if (o instanceof QueryProxy) {
 				query = ((QueryProxy) o).query;
+				findHandler(query, kcb);
 			}
 		}
+	}
+
+	@Kroll.method
+	public void register(KrollDict opts) {
+		ParseQuery<ParseObject> query;
+		// importing of callbacks:
+		KrollCallbacks kcb = new KrollCallbacks(opts);
+		// importingof query proxy
+		if (opts.containsKeyAndNotNull(ParselivequeryModule.QUERY)) {
+			Object o = opts.get(ParselivequeryModule.QUERY);
+			if (o instanceof QueryProxy) {
+				query = ((QueryProxy) o).query;
+				registerHandler(query, kcb);
+			}
+		}
+	}
+
+	@Kroll.method
+	public void unregister(KrollDict opts) {
+		// importing of callbacks:
+		KrollCallbacks kcb = new KrollCallbacks(opts);
+
+	}
+
+	private void findHandler(ParseQuery<ParseObject> query, KrollCallbacks kcb) {
 		query.findInBackground(new FindCallback<ParseObject>() {
 			public void done(List<ParseObject> messages, ParseException e) {
 				if (e == null) {
@@ -90,4 +116,21 @@ public class ObjectProxy extends KrollProxy {
 			}
 		});
 	}
+
+	private void registerHandler(ParseQuery<ParseObject> query,
+			KrollCallbacks kcb) {
+		ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory
+				.getClient();
+		SubscriptionHandling<ParseObject> subscriptionHandling = parseLiveQueryClient
+				.subscribe(query);
+		subscriptionHandling
+				.handleEvents(new SubscriptionHandling.HandleEventsCallback<ParseObject>() {
+					@Override
+					public void onEvents(ParseQuery<ParseObject> query,
+							SubscriptionHandling.Event event, ParseObject object) {
+						// HANDLING all events
+					}
+				});
+	}
+
 }

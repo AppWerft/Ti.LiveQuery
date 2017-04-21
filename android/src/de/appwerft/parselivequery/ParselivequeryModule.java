@@ -33,7 +33,7 @@ public class ParselivequeryModule extends KrollModule {
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
 	public static final String QUERY = "query";
-	ParseLiveQueryClient plqClient;
+	ParseLiveQueryClient client;
 	Context ctx;
 
 	// You can define constants with @Kroll.constant, for example:
@@ -71,7 +71,7 @@ public class ParselivequeryModule extends KrollModule {
 							.applicationId(applicationId).clientKey(clientKey)
 							.server(opts.getString(TiC.PROPERTY_URI)).build());
 					// and a parseLiveQueryClient
-					plqClient = ParseLiveQueryClient.Factory.getClient();
+					client = ParseLiveQueryClient.Factory.getClient();
 					return true;
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
@@ -80,12 +80,19 @@ public class ParselivequeryModule extends KrollModule {
 			}
 
 		} else
-			plqClient = ParseLiveQueryClient.Factory.getClient();
+			client = ParseLiveQueryClient.Factory.getClient();
 		return true;
 	}
 
 	@Kroll.method
+	void logout() {
+		ParseUser.logOut();
+	}
+
+	@Kroll.method
 	void login(KrollDict opts) {
+		if (client == null)
+			return;
 		KrollCallbacks kcb = new KrollCallbacks(opts);
 		String email = null, password = null;
 		if (opts.containsKeyAndNotNull("email")) {
@@ -112,6 +119,8 @@ public class ParselivequeryModule extends KrollModule {
 
 	@Kroll.method
 	void loginAnonymous(KrollDict opts) {
+		if (client == null)
+			return;
 		KrollCallbacks kcb = new KrollCallbacks(opts);
 		ParseAnonymousUtils.logIn(new LogInCallback() {
 			@Override
