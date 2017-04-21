@@ -23,9 +23,13 @@ Parse.setEndpoint({
 Parse.loginAnonymous({
 	onsuccess : WorkingWithParse,
 	onerror : function(){}
-	}
 });
-
+Parse.login({
+	email: "putin@gulag.org",
+	password : "KGB",
+	onsuccess : WorkingWithParse,
+	onerror : function(){}
+});
 
 function WorkingWithParse() {
 	var bird = Parse.createObject("Bird");

@@ -85,6 +85,32 @@ public class ParselivequeryModule extends KrollModule {
 	}
 
 	@Kroll.method
+	void login(KrollDict opts) {
+		KrollCallbacks kcb = new KrollCallbacks(opts);
+		String email = null, password = null;
+		if (opts.containsKeyAndNotNull("email")) {
+			email = opts.getString("email");
+		}
+		if (opts.containsKeyAndNotNull("password")) {
+			password = opts.getString("password");
+		}
+		ParseUser.logInInBackground(email, password, new LogInCallback() {
+			@Override
+			public void done(ParseUser parseUser, com.parse.ParseException e) {
+				KrollDict kd = new KrollDict();
+				if (parseUser != null)
+					if (kcb.onSuccess != null) {
+						kcb.onSuccess.call(getKrollObject(), kd);
+					} else {
+						if (kcb.onError != null) {
+							kcb.onError.call(getKrollObject(), kd);
+						}
+					}
+			}
+		});
+	}
+
+	@Kroll.method
 	void loginAnonymous(KrollDict opts) {
 		KrollCallbacks kcb = new KrollCallbacks(opts);
 		ParseAnonymousUtils.logIn(new LogInCallback() {
