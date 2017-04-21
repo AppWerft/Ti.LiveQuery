@@ -20,19 +20,33 @@ Parse.setEndpoint({
 	applicationId : APPLICATION_ID
 	clientKey : CLIENT_KEY
 Parse.loginAnonymous({
-	onsuccess : queryFn,
+	onsuccess : WorkingWithParse,
 	onerror : function(){}
 	}
 });
 
 
-function queryFn() {
+function WorkingWithParse() {
 	var bird = Parse.createObject("Bird");
 	bird.save({
-		data : JSON-Object
+		data : {
+			age : 2,
+			color : "red",
+			name : "Rotkehlchen"
+		},
 		onsuccess : function() {},
 		onerror : function(){}
 	});
+	bird.save({
+		data : {
+			age : 5,
+			color : "blue",
+			name : "Blaumeise"
+		}
+		onsuccess : function() {},
+		onerror : function(){}
+	});
+	
 	var query = Parse.createQuery({
 		name : "Bird",
 		query : "age>1,color==brown,orderby desc age"
