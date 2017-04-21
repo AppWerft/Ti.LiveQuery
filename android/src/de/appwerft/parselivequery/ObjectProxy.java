@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollFunction;
+import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
@@ -16,39 +17,41 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SubscriptionHandling;
 
+import de.appwerft.parselivequery.utils.GenericClass;
+
 // This proxy can be created by calling Parselivequery.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = ParselivequeryModule.class)
 public class ObjectProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
-	private ParseQuery<GenericClass> query = ParseQuery
-			.getQuery(GenericClass.class);
-	static final String USER_ID_KEY = "userId";
 
-	static final String BODY_KEY = "body";
+	public ParseQuery<ParseObject> query;
+
 	static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
 	private String CLASSNAME;
 
-	// Constructor
+	// empty Constructor
 	public ObjectProxy() {
 		super();
 	}
 
+	// constructor parameter import:
 	@Override
-	public void handleCreationDict(KrollDict opts) {
-		if (opts.containsKeyAndNotNull("CLASSNAME"))
-			CLASSNAME = opts.getString("CLASSNAME");
-		super.handleCreationDict(opts);
+	public void handleCreationArgs(KrollModule createdInModule, Object[] args) {
+		if (args.length == 1 && args[0] instanceof String) {
+			CLASSNAME = (String) args[0];
+		}
 	}
 
+	// save to parse >>>>>>>>>>
 	@Kroll.method
 	public void save(KrollDict opts) {
 		KrollCallbacks kcb = new KrollCallbacks(opts);
 		KrollDict data = opts.getKrollDict("data");
-		ParseObject message = ParseObject.create("Message");
-		message.put(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
-		message.put(BODY_KEY, data);
-		message.saveInBackground(new SaveCallback() {
+		ParseObject object = ParseObject.create("CLASSNAME");
+		object.put("userId", ParseUser.getCurrentUser().getObjectId());
+		object.put("body", opts);
+		object.saveInBackground(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
@@ -60,20 +63,20 @@ public class ObjectProxy extends KrollProxy {
 		});
 	}
 
+	// querying of parse:
 	@Kroll.method
-	void load(KrollDict opts) {
+	public void find(KrollDict opts) {
+		// importing of callbacks:
 		KrollCallbacks kcb = new KrollCallbacks(opts);
-		ParseQuery<GenericClass> query = ParseQuery
-				.getQuery(GenericClass.class);
-		query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
-		// get the latest 50 messages, order will show up newest to oldest of
-		// this group
-		query.orderByDescending("createdAt");
-		query.whereEqualTo("CLASSNAME", CLASSNAME);
-		// Execute query to fetch all messages from Parse asynchronously
-		// This is equivalent to a SELECT query with SQL
-		query.findInBackground(new FindCallback<GenericClass>() {
-			public void done(List<GenericClass> messages, ParseException e) {
+		// importingof query proxy
+		if (opts.containsKeyAndNotNull(ParselivequeryModule.QUERY)) {
+			Object o = opts.get(ParselivequeryModule.QUERY);
+			if (o instanceof QueryProxy) {
+				query = ((QueryProxy) o).query;
+			}
+		}
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> messages, ParseException e) {
 				if (e == null) {
 					KrollDict res = new KrollDict();
 					res.put("messages", messages.toArray());

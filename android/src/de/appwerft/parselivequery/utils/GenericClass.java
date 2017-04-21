@@ -1,4 +1,4 @@
-package de.appwerft.parselivequery;
+package de.appwerft.parselivequery.utils;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;

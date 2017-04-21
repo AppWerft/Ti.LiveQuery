@@ -39,7 +39,7 @@ function queryFn() {
 	});
 	
 	// pull request:
-	query.load({
+	query.find({
 		onload : function() {},
 		onerror : function(){}
 	});

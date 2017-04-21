@@ -21,7 +21,7 @@ import com.parse.SubscriptionHandling;
 public class QueryProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
-	private ParseQuery<ParseObject> query;
+	public ParseQuery<ParseObject> query;
 
 	// Constructor
 	public QueryProxy() {
@@ -35,38 +35,47 @@ public class QueryProxy extends KrollProxy {
 
 	@Override
 	public void handleCreationDict(KrollDict opts) {
-		String name = null;
+		String className = null;
 		String queryString;
 		if (opts.containsKeyAndNotNull("name"))
-			name = opts.getString("name");
-		if (opts.containsKeyAndNotNull("name")) {
+			className = opts.getString("name");
+		else {
+			Log.w(LCAT, "name of object is missing");
+			return;
+		}
+		query = new ParseQuery(className);
+		if (opts.containsKeyAndNotNull("query")) {
 			queryString = opts.getString("query");
 			String[] conditions = queryString.split("/,/");
 			for (int i = 0; i < conditions.length; i++) {
 				String condition = conditions[i];
 				if (condition.contains("==")) {
-					String[] parts = condition.split("==");
+					String[] parts = condition.split("\\s*==\\s*");
 					query = query.whereEqualTo(parts[0], parts[1]);
 				}
 				if (condition.contains("!=")) {
-					String[] parts = condition.split("!=");
+					String[] parts = condition.split("\\s*!=\\s*");
 					query = query.whereNotEqualTo(parts[0], parts[1]);
 				}
 				if (condition.contains(">")) {
-					String[] parts = condition.split(">");
+					String[] parts = condition.split("\\s*>\\s*");
 					query = query.whereGreaterThan(parts[0], parts[1]);
 				}
 				if (condition.contains("<")) {
-					String[] parts = condition.split("<");
+					String[] parts = condition.split("\\s*<\\s*");
 					query = query.whereLessThan(parts[0], parts[1]);
 				}
 				if (condition.contains(">=")) {
-					String[] parts = condition.split(">=");
+					String[] parts = condition.split("\\s*>=\\s*");
 					query = query.whereGreaterThanOrEqualTo(parts[0], parts[1]);
 				}
 				if (condition.contains("<=")) {
-					String[] parts = condition.split("<=");
+					String[] parts = condition.split("\\s*<=\\s*");
 					query = query.whereLessThanOrEqualTo(parts[0], parts[1]);
+				}
+				if (condition.contains("limit ")) {
+					String value = condition.replace("limit ", "");
+					query = query.setLimit(Integer.parseInt(value));
 				}
 				if (condition.contains("exists ")) {
 					String value = condition.replace("exists ", "");
@@ -86,5 +95,14 @@ public class QueryProxy extends KrollProxy {
 			}
 		}
 		super.handleCreationDict(opts);
+	}
+
+	private String[] splitString(String foo) {
+		String s = "This is a sample sentence.";
+		String[] bar = s.split("\\s+");
+		for (int i = 0; i < bar.length; i++) {
+			bar[i] = bar[i].replaceAll("[^\\w]", "");
+		}
+		return bar;
 	}
 }

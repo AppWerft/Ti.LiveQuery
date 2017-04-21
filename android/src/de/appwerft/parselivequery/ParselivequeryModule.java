@@ -32,6 +32,7 @@ public class ParselivequeryModule extends KrollModule {
 
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
+	public static final String QUERY = "query";
 	ParseLiveQueryClient plqClient;
 	Context ctx;
 
