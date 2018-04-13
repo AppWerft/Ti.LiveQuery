@@ -1,21 +1,12 @@
 package de.appwerft.parselivequery;
 
-import java.util.List;
-
 import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseLiveQueryClient;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-import com.parse.SubscriptionHandling;
 
 // This proxy can be created by calling Parselivequery.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = ParselivequeryModule.class)
@@ -34,6 +25,10 @@ public class QueryProxy extends KrollProxy {
 		this.query = query;
 	}
 
+	public ParseQuery<ParseObject> getQuery() {
+		return query;
+	}
+
 	@Override
 	public void handleCreationDict(KrollDict opts) {
 		String className = null;
@@ -44,7 +39,7 @@ public class QueryProxy extends KrollProxy {
 			Log.w(LCAT, "name of object is missing");
 			return;
 		}
-		query = new ParseQuery(className);
+		query = new ParseQuery<ParseObject>(className);
 		if (opts.containsKeyAndNotNull("query")) {
 			queryString = opts.getString("query");
 			String[] conditions = queryString.split("/,/");
@@ -96,65 +91,6 @@ public class QueryProxy extends KrollProxy {
 			}
 		}
 		super.handleCreationDict(opts);
-	}
-
-	@Kroll.method
-	public void registerQuery(KrollDict opts) {
-		final ParseQuery<ParseObject> parseObject;
-		// importing of callbacks:
-		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
-		// importing of query proxy
-		if (opts.containsKeyAndNotNull(ParselivequeryModule.QUERY)) {
-			Object o = opts.get(ParselivequeryModule.QUERY);
-			if (o instanceof QueryProxy) {
-				parseObject = ((QueryProxy) o).query;
-				registerHandler(parseObject, krollCallbacks);
-			}
-		}
-	}
-
-	@Kroll.method
-	public void unregisterQuery(KrollDict opts) {
-		// importing of callbacks:
-		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
-		// unregisterHandler();
-		// TODO
-	}
-
-	private void unregisterHandler(ParseQuery<ParseObject> parseqQuery,
-			final KrollCallbacks krollCallbacks) {
-		ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory
-				.getClient();
-		parseLiveQueryClient.unsubscribe(parseqQuery);
-
-	}
-
-	private void registerHandler(ParseQuery<ParseObject> query,
-			final KrollCallbacks krollCallbacks) {
-		ParseLiveQueryClient client = ParseLiveQueryClient.Factory.getClient();
-		SubscriptionHandling<ParseObject> handling = client.subscribe(query);
-
-		handling.handleEvents(new SubscriptionHandling.HandleEventsCallback<ParseObject>() {
-			@Override
-			public void onEvents(ParseQuery<ParseObject> query,
-					SubscriptionHandling.Event event, ParseObject object) {
-
-				KrollDict kd = new KrollDict();
-				kd.put("event", event); // int
-				kd.put("data", parseObj2KrollDict(object)); // int
-				if (krollCallbacks.onEvent != null) {
-					krollCallbacks.onEvent.call(getKrollObject(), kd);
-				}
-
-				// Handling all events
-			}
-		});
-	}
-
-	private KrollDict parseObj2KrollDict(ParseObject object) {
-		KrollDict kd = new KrollDict();
-		kd.put("data", object.getJSONObject("data"));
-		return kd;
 	}
 
 	private String[] splitString(String foo) {

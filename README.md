@@ -65,11 +65,11 @@ function WorkingWithParse() {
 	});
 	
 	// live request:
-	bird.registerQuery({
+	bird.registerQuery(query,{
 		onevent : function() {},
 		onerror : function(){}
 	});
-	bird.unregisterQuery();
+	bird.unregisterQuery(query);
 }
 
 ```
