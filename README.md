@@ -64,11 +64,11 @@ function WorkingWithParse() {
 		onerror : function(){}
 	});
 	// live request:
-	query.register({
+	query.registerObject({
 		onevent : function() {},
 		onerror : function(){}
 	});
-	query.unregister();
+	query.unregisterObject();
 }
 
 ```
