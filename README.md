@@ -63,12 +63,13 @@ function WorkingWithParse() {
 		onload : function() {},
 		onerror : function(){}
 	});
+	
 	// live request:
-	query.registerObject({
+	bird.registerQuery({
 		onevent : function() {},
 		onerror : function(){}
 	});
-	query.unregisterObject();
+	bird.unregisterQuery();
 }
 
 ```

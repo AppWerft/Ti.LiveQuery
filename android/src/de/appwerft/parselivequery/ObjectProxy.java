@@ -100,24 +100,16 @@ public class ObjectProxy extends KrollProxy {
 	public void unregisterObject(KrollDict opts) {
 		// importing of callbacks:
 		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
+		// unregisterHandler();
 		// TODO
 	}
 
-	private void findHandler(ParseQuery<ParseObject> query,
+	private void unregisterHandler(ParseQuery<ParseObject> parseqQuery,
 			final KrollCallbacks krollCallbacks) {
-		query.findInBackground(new FindCallback<ParseObject>() {
-			public void done(List<ParseObject> objects, ParseException e) {
-				if (e == null) {
-					KrollDict res = new KrollDict();
-					res.put("data", objects.toArray());
-					if (krollCallbacks.onSuccess != null)
-						krollCallbacks.onSuccess.call(getKrollObject(), res);
-				} else {
+		ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory
+				.getClient();
+		parseLiveQueryClient.unsubscribe(parseqQuery);
 
-					Log.e("message", "Error Loading Messages" + e);
-				}
-			}
-		});
 	}
 
 	private void registerHandler(ParseQuery<ParseObject> query,
@@ -142,7 +134,28 @@ public class ObjectProxy extends KrollProxy {
 		});
 	}
 
-	private KrollDict parseObj2KrollDict(ParseObject object) {
+	
+	
+	
+	private void findHandler(ParseQuery<ParseObject> query,
+			final KrollCallbacks krollCallbacks) {
+		query.findInBackground(new FindCallback<ParseObject>() {
+			public void done(List<ParseObject> objects, ParseException e) {
+				if (e == null) {
+					KrollDict res = new KrollDict();
+					res.put("data", objects.toArray());
+					if (krollCallbacks.onSuccess != null)
+						krollCallbacks.onSuccess.call(getKrollObject(), res);
+				} else {
+
+					Log.e("message", "Error Loading Messages" + e);
+				}
+			}
+		});
+	}
+
+	
+	public KrollDict parseObj2KrollDict(ParseObject object) {
 		KrollDict kd = new KrollDict();
 		kd.put("data", object.getJSONObject("data"));
 		return kd;
