@@ -34,7 +34,7 @@ Parse.logout();
 
 function WorkingWithParse() {
 	var bird = Parse.createObject("Bird");
-	bird.save({
+	bird.saveObject({
 		data : {
 			age : 2,
 			color : "red",
@@ -43,7 +43,7 @@ function WorkingWithParse() {
 		onsuccess : function() {},
 		onerror : function(){}
 	});
-	bird.save({
+	bird.saveObject({
 		data : {
 			age : 5,
 			color : "blue",
@@ -59,7 +59,7 @@ function WorkingWithParse() {
 	});
 	
 	// pull request:
-	query.find({
+	query.findObject({
 		onload : function() {},
 		onerror : function(){}
 	});

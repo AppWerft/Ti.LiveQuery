@@ -45,7 +45,7 @@ public class ObjectProxy extends KrollProxy {
 
 	// save to parse
 	@Kroll.method
-	public void save(KrollDict opts) {
+	public void saveObject(KrollDict opts) {
 		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
 		KrollDict data = opts.getKrollDict("data");
 		ParseObject parseObject = ParseObject.create(CLASSNAME);
@@ -67,7 +67,7 @@ public class ObjectProxy extends KrollProxy {
 
 	// querying of parse:
 	@Kroll.method
-	public void find(KrollDict opts) {
+	public void findObject(KrollDict opts) {
 		ParseQuery<ParseObject> query;
 		// importing of callbacks:
 		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
