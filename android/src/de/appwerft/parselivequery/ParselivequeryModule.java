@@ -93,7 +93,7 @@ public class ParselivequeryModule extends KrollModule {
 	void login(KrollDict opts) {
 		if (client == null)
 			return;
-		KrollCallbacks kcb = new KrollCallbacks(opts);
+		final KrollCallbacks kcb = new KrollCallbacks(opts);
 		String email = null, password = null;
 		if (opts.containsKeyAndNotNull("email")) {
 			email = opts.getString("email");
@@ -121,7 +121,7 @@ public class ParselivequeryModule extends KrollModule {
 	void loginAnonymous(KrollDict opts) {
 		if (client == null)
 			return;
-		KrollCallbacks kcb = new KrollCallbacks(opts);
+		final KrollCallbacks kcb = new KrollCallbacks(opts);
 		ParseAnonymousUtils.logIn(new LogInCallback() {
 			@Override
 			public void done(ParseUser user, ParseException e) {
@@ -135,5 +135,4 @@ public class ParselivequeryModule extends KrollModule {
 			}
 		});
 	}
-
 }

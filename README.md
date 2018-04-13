@@ -65,7 +65,7 @@ function WorkingWithParse() {
 	});
 	// live request:
 	query.register({
-		onchange : function() {},
+		onevent : function() {},
 		onerror : function(){}
 	});
 	query.unregister();

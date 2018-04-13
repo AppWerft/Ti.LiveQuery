@@ -6,6 +6,7 @@ import org.appcelerator.kroll.KrollFunction;
 public class KrollCallbacks {
 	public KrollFunction onSuccess;
 	public KrollFunction onError;
+	public KrollFunction onEvent;
 
 	public KrollCallbacks(KrollDict opts) {
 		if (opts.containsKeyAndNotNull("onsuccess"))
@@ -16,6 +17,10 @@ public class KrollCallbacks {
 			onError = (KrollFunction) opts.get("onerror");
 		else
 			onError = null;
+		if (opts.containsKeyAndNotNull("onevent"))
+			onEvent = (KrollFunction) opts.get("onevent");
+		else
+			onEvent = null;
 
 	}
 

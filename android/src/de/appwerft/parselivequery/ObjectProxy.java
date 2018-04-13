@@ -43,15 +43,15 @@ public class ObjectProxy extends KrollProxy {
 		}
 	}
 
-	// save to parse >>>>>>>>>>
+	// save to parse
 	@Kroll.method
 	public void save(KrollDict opts) {
-		KrollCallbacks kcb = new KrollCallbacks(opts);
+		final KrollCallbacks kcb = new KrollCallbacks(opts);
 		KrollDict data = opts.getKrollDict("data");
-		ParseObject object = ParseObject.create("CLASSNAME");
-		object.put("userId", ParseUser.getCurrentUser().getObjectId());
-		object.put("body", opts);
-		object.saveInBackground(new SaveCallback() {
+		ParseObject parseObject = ParseObject.create(CLASSNAME);
+		parseObject.put("userId", ParseUser.getCurrentUser().getObjectId());
+		parseObject.put("body", opts);
+		parseObject.saveInBackground(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
 				if (e == null) {
@@ -68,7 +68,7 @@ public class ObjectProxy extends KrollProxy {
 	public void find(KrollDict opts) {
 		ParseQuery<ParseObject> query;
 		// importing of callbacks:
-		KrollCallbacks kcb = new KrollCallbacks(opts);
+		final KrollCallbacks kcb = new KrollCallbacks(opts);
 		// importingof query proxy
 		if (opts.containsKeyAndNotNull(ParselivequeryModule.QUERY)) {
 			Object o = opts.get(ParselivequeryModule.QUERY);
@@ -83,7 +83,7 @@ public class ObjectProxy extends KrollProxy {
 	public void register(KrollDict opts) {
 		ParseQuery<ParseObject> query;
 		// importing of callbacks:
-		KrollCallbacks kcb = new KrollCallbacks(opts);
+		final KrollCallbacks kcb = new KrollCallbacks(opts);
 		// importingof query proxy
 		if (opts.containsKeyAndNotNull(ParselivequeryModule.QUERY)) {
 			Object o = opts.get(ParselivequeryModule.QUERY);
@@ -97,16 +97,17 @@ public class ObjectProxy extends KrollProxy {
 	@Kroll.method
 	public void unregister(KrollDict opts) {
 		// importing of callbacks:
-		KrollCallbacks kcb = new KrollCallbacks(opts);
+		final KrollCallbacks kcb = new KrollCallbacks(opts);
 
 	}
 
-	private void findHandler(ParseQuery<ParseObject> query, KrollCallbacks kcb) {
+	private void findHandler(ParseQuery<ParseObject> query,
+			final KrollCallbacks kcb) {
 		query.findInBackground(new FindCallback<ParseObject>() {
-			public void done(List<ParseObject> messages, ParseException e) {
+			public void done(List<ParseObject> objects, ParseException e) {
 				if (e == null) {
 					KrollDict res = new KrollDict();
-					res.put("messages", messages.toArray());
+					res.put("data", objects.toArray());
 					if (kcb.onSuccess != null)
 						kcb.onSuccess.call(getKrollObject(), res);
 				} else {
@@ -118,19 +119,30 @@ public class ObjectProxy extends KrollProxy {
 	}
 
 	private void registerHandler(ParseQuery<ParseObject> query,
-			KrollCallbacks kcb) {
-		ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory
-				.getClient();
-		SubscriptionHandling<ParseObject> subscriptionHandling = parseLiveQueryClient
-				.subscribe(query);
-		subscriptionHandling
-				.handleEvents(new SubscriptionHandling.HandleEventsCallback<ParseObject>() {
-					@Override
-					public void onEvents(ParseQuery<ParseObject> query,
-							SubscriptionHandling.Event event, ParseObject object) {
-						// HANDLING all events
-					}
-				});
+			final KrollCallbacks kcb) {
+		ParseLiveQueryClient client = ParseLiveQueryClient.Factory.getClient();
+		SubscriptionHandling<ParseObject> handling = client.subscribe(query);
+
+		handling.handleEvents(new SubscriptionHandling.HandleEventsCallback<ParseObject>() {
+			@Override
+			public void onEvents(ParseQuery<ParseObject> query,
+					SubscriptionHandling.Event event, ParseObject object) {
+
+				KrollDict kd = new KrollDict();
+				kd.put("event", event); // int
+				kd.put("data", parseObj2KrollDict(object)); // int
+				if (kcb.onEvent != null) {
+					kcb.onEvent.call(getKrollObject(), kd);
+				}
+
+				// Handling all events
+			}
+		});
 	}
 
+	private KrollDict parseObj2KrollDict(ParseObject object) {
+		KrollDict kd = new KrollDict();
+		kd.put("data", object.getJSONObject("data"));
+		return kd;
+	}
 }
