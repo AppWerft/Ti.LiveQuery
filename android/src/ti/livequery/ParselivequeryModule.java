@@ -28,6 +28,7 @@ import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -62,7 +63,6 @@ public class ParselivequeryModule extends KrollModule {
 		String server = (String) args.get("server");
 		Boolean localDatastoreEnabled = TiConvert.toBoolean(
 				args.get("localDatastoreEnabled"), false);
-
 		Parse.Configuration.Builder builder = new Parse.Configuration.Builder(
 				TiApplication.getInstance().getCurrentActivity())
 				.applicationId(applicationId).clientKey(clientKey)
@@ -71,7 +71,6 @@ public class ParselivequeryModule extends KrollModule {
 		if (localDatastoreEnabled) {
 			builder = builder.enableLocalDataStore();
 		}
-
 		Parse.initialize(builder.build());
 	}
 
@@ -216,5 +215,10 @@ public class ParselivequeryModule extends KrollModule {
 				}
 			}
 		});
+	}
+
+	@Kroll.method
+	public void clearAllCachedResults() {
+		ParseQuery.clearAllCachedResults();
 	}
 }

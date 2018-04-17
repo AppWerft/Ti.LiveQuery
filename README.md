@@ -10,6 +10,49 @@ To solve this problem, we introduce Parse LiveQuery. This tool allows you to sub
 
 The module is heavy WIP and not ready for production.
 
+## Methods of module
+
+### initialize(dictionary);
+* applicationId (String)
+* clientKey (String)
+* server (URL/Endpoint)
+* localDatastoreEnabled (true/false)
+ 
+ 
+### createParseObject(classmame)
+Returns an ParseObject  
+ 
+### createClient(dictionary)
+ 
+* applicationId (String)
+* clientKey (String)
+* server (URL/Endpoint)
+
+Returns a Client
+
+## Method of client
+
+### reconnect()
+
+### disconnect()
+
+### connectIfNeeded()
+
+### login(dictionary)
+* email
+* password
+* onsuccess()
+* onerror() 
+
+### loginAnonymous(dictionary)
+* onsuccess()
+* onerror()
+
+
+## Methods of ParseObject
+
+
+ 
 ## Use the module
 
 ```javascript
