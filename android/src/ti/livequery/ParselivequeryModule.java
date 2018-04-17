@@ -6,17 +6,19 @@
  * Please see the LICENSE included with this distribution for details.
  *
  */
-package de.appwerft.parselivequery;
+package ti.livequery;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
+import org.appcelerator.titanium.util.TiConvert;
 
 import android.content.Context;
 
@@ -25,9 +27,11 @@ import com.parse.Parse;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
-@Kroll.module(name = "Parselivequery", id = "de.appwerft.parselivequery")
+@Kroll.module(name = "Parselivequery", id = "ti.livequery")
 public class ParselivequeryModule extends KrollModule {
 
 	// Standard Debugging variables
@@ -49,6 +53,31 @@ public class ParselivequeryModule extends KrollModule {
 		Log.d(LCAT, "inside onAppCreate");
 		// put module init code that needs to run when the application is
 		// created
+	}
+
+	@Kroll.method
+	public void initialize(KrollDict args) {
+		String applicationId = (String) args.get("applicationId");
+		String clientKey = (String) args.get("clientKey");
+		String server = (String) args.get("server");
+		Boolean localDatastoreEnabled = TiConvert.toBoolean(
+				args.get("localDatastoreEnabled"), false);
+
+		Parse.Configuration.Builder builder = new Parse.Configuration.Builder(
+				TiApplication.getInstance().getCurrentActivity())
+				.applicationId(applicationId).clientKey(clientKey)
+				.server(server);
+
+		if (localDatastoreEnabled) {
+			builder = builder.enableLocalDataStore();
+		}
+
+		Parse.initialize(builder.build());
+	}
+
+	@Kroll.method
+	public void createClient(@Kroll.argument(optional = true) KrollDict opts) {
+		setEndpoint(opts);
 	}
 
 	@Kroll.method
@@ -82,6 +111,59 @@ public class ParselivequeryModule extends KrollModule {
 		} else
 			client = ParseLiveQueryClient.Factory.getClient();
 		return true;
+	}
+
+	@Kroll.method
+	public Boolean isConnected() {
+		if (client == null)
+			return false;
+		else
+			return true; // not really
+	}
+
+	@Kroll.method
+	public void reconnect() {
+		if (client != null) {
+			client.reconnect();
+		}
+	}
+
+	@Kroll.method
+	public void disconnect() {
+		if (client != null) {
+			client.disconnect();
+		}
+	}
+
+	@Kroll.method
+	public void connectIfNeeded() {
+		if (client != null) {
+			client.connectIfNeeded();
+		}
+	}
+
+	@Kroll.method
+	public void saveObject(KrollDict object) {
+		String className = (String) object.get("className");
+		KrollDict parameters = (KrollDict) object.get("parameters");
+		KrollFunction callback = (KrollFunction) object.get("callback");
+		ParseObject newObject = new ParseObject(className);
+		for (String key : parameters.keySet()) {
+			newObject.put(key, parameters.get(key));
+		}
+		newObject.saveInBackground(new SaveCallback() {
+			@Override
+			public void done(ParseException e) {
+				KrollDict dict = new KrollDict();
+				if (e == null) {
+					dict.put("success", true);
+
+				} else {
+					dict.put("success", false);
+				}
+				callback.call(getKrollObject(), dict);
+			}
+		});
 	}
 
 	@Kroll.method

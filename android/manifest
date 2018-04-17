@@ -2,7 +2,7 @@
 # this is your module manifest and used by Titanium
 # during compilation, packaging, distribution, etc.
 #
-version: 2.0.0
+version: 2.0.1
 apiversion: 4
 architectures: arm64-v8a armeabi-v7a x86
 description: parselivequery
@@ -12,7 +12,7 @@ copyright: Copyright (c) 2017 by
 
 # these should not be edited
 name: parselivequery
-moduleid: de.appwerft.parselivequery
+moduleid: ti.livequery
 guid: 973400ed-5bf3-4362-9714-3b697b5aad4b
 platform: android
 minsdk: 7.0.0.

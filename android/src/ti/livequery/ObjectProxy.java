@@ -1,4 +1,4 @@
-package de.appwerft.parselivequery;
+package ti.livequery;
 
 import java.util.List;
 

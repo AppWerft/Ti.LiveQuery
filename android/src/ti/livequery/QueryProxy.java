@@ -1,4 +1,4 @@
-package de.appwerft.parselivequery;
+package ti.livequery;
 
 import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
