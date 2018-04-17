@@ -146,7 +146,7 @@ public class ParselivequeryModule extends KrollModule {
 	public void saveObject(KrollDict object) {
 		String className = (String) object.get("className");
 		KrollDict parameters = (KrollDict) object.get("parameters");
-		KrollFunction callback = (KrollFunction) object.get("callback");
+		final KrollFunction callback = (KrollFunction) object.get("callback");
 		ParseObject newObject = new ParseObject(className);
 		for (String key : parameters.keySet()) {
 			newObject.put(key, parameters.get(key));
