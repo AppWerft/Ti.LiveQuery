@@ -9,8 +9,6 @@
 package ti.livequery;
 
 import java.net.URI;
-
-
 import java.net.URISyntaxException;
 
 import org.appcelerator.kroll.KrollDict;
@@ -33,10 +31,12 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
 import okhttp3.Connection;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -44,11 +44,10 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.internal.http.HttpHeaders;
 import okhttp3.internal.platform.Platform;
+import okhttp3.logging.HttpLoggingInterceptor;
 import okio.Buffer;
 import okio.BufferedSource;
-
 import static okhttp3.internal.platform.Platform.INFO;
-
 
 @Kroll.module(name = "Parselivequery", id = "ti.livequery")
 public class ParselivequeryModule extends KrollModule {
@@ -65,9 +64,19 @@ public class ParselivequeryModule extends KrollModule {
 	public static final int LOG_LEVEL_INFO = Parse.LOG_LEVEL_INFO;
 	@Kroll.constant
 	public static final int LOG_LEVEL_WARNING = Parse.LOG_LEVEL_WARNING;
-	
+
 	@Kroll.constant
 	public static final int INTERCEPTOR_LEVEL_BODY = HttpLoggingInterceptor.Level.BODY
+			.ordinal();
+	@Kroll.constant
+	public static final int INTERCEPTOR_LEVEL_BASIC = HttpLoggingInterceptor.Level.BASIC
+			.ordinal();
+	@Kroll.constant
+	public static final int INTERCEPTOR_LEVEL_HEADERS = HttpLoggingInterceptor.Level.HEADERS
+			.ordinal();
+	@Kroll.constant
+	public static final int INTERCEPTOR_LEVEL_NONE = HttpLoggingInterceptor.Level.NONE
+			.ordinal();
 
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
@@ -92,7 +101,23 @@ public class ParselivequeryModule extends KrollModule {
 
 	@Kroll.method
 	public void setLogLevel(int level) {
+		Parse.setLogLevel(level);
+	}
 
+	@Kroll.method
+	public void setHttpLoggingInterceptorLevel(int level) {
+		OkHttpClient.Builder builder = new OkHttpClient.Builder();
+		HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+		if (HttpLoggingInterceptor.Level.BODY.ordinal() == INTERCEPTOR_LEVEL_BODY)
+			httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+		else if (HttpLoggingInterceptor.Level.HEADERS.ordinal() == INTERCEPTOR_LEVEL_HEADERS)
+			httpLoggingInterceptor
+					.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+		else if (HttpLoggingInterceptor.Level.NONE.ordinal() == INTERCEPTOR_LEVEL_NONE)
+			httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
+		else if (HttpLoggingInterceptor.Level.BASIC.ordinal() == INTERCEPTOR_LEVEL_BASIC)
+			httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+		builder.networkInterceptors().add(httpLoggingInterceptor);
 	}
 
 	@Kroll.method
