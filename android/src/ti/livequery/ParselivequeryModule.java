@@ -9,6 +9,8 @@
 package ti.livequery;
 
 import java.net.URI;
+
+
 import java.net.URISyntaxException;
 
 import org.appcelerator.kroll.KrollDict;
@@ -31,9 +33,41 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import okhttp3.Connection;
+import okhttp3.Headers;
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okhttp3.internal.http.HttpHeaders;
+import okhttp3.internal.platform.Platform;
+import okio.Buffer;
+import okio.BufferedSource;
+
+import static okhttp3.internal.platform.Platform.INFO;
+
 
 @Kroll.module(name = "Parselivequery", id = "ti.livequery")
 public class ParselivequeryModule extends KrollModule {
+
+	@Kroll.constant
+	public static final int LOG_LEVEL_DEBUG = Parse.LOG_LEVEL_DEBUG;
+	@Kroll.constant
+	public static final int LOG_LEVEL_ERROR = Parse.LOG_LEVEL_ERROR;
+	@Kroll.constant
+	public static final int LOG_LEVEL_VERBOSE = Parse.LOG_LEVEL_VERBOSE;
+	@Kroll.constant
+	public static final int LOG_LEVEL_NONE = Parse.LOG_LEVEL_NONE;
+	@Kroll.constant
+	public static final int LOG_LEVEL_INFO = Parse.LOG_LEVEL_INFO;
+	@Kroll.constant
+	public static final int LOG_LEVEL_WARNING = Parse.LOG_LEVEL_WARNING;
+	
+	@Kroll.constant
+	public static final int INTERCEPTOR_LEVEL_BODY = HttpLoggingInterceptor.Level.BODY
 
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
@@ -54,6 +88,11 @@ public class ParselivequeryModule extends KrollModule {
 		Log.d(LCAT, "inside onAppCreate");
 		// put module init code that needs to run when the application is
 		// created
+	}
+
+	@Kroll.method
+	public void setLogLevel(int level) {
+
 	}
 
 	@Kroll.method

@@ -10,7 +10,18 @@ To solve this problem, we introduce Parse LiveQuery. This tool allows you to sub
 
 The module is heavy WIP and not ready for production.
 
-## Methods of module
+# Module
+
+## Constants
+
+* LOG\_LEVEL_NONE
+* LOG\_LEVEL_INFO
+* LOG\_LEVEL_WARNING
+* LOG\_LEVEL_ERROR
+* LOG\_LEVEL_VERBOSE
+* LOG\_LEVEL_DEBUG	
+ 
+## Methods 
 
 ### initialize(dictionary);
 * applicationId (String)
@@ -18,6 +29,12 @@ The module is heavy WIP and not ready for production.
 * server (URL/Endpoint)
 * localDatastoreEnabled (true/false)
  
+### setHttpLoggingInterceptorLevel(int)
+ 
+see constants above
+
+### setLoggingLevel(int)
+see constants above
  
 ### createParseObject(classmame)
 Returns an ParseObject  
