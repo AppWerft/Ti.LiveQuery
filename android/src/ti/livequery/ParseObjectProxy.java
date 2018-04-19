@@ -3,6 +3,7 @@ package ti.livequery;
 import java.util.List;
 
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
@@ -43,22 +44,37 @@ public class ParseObjectProxy extends KrollProxy {
 
 	// save to parse
 	@Kroll.method
-	public void saveInBackground(KrollDict opts) {
-		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
-		KrollDict data = opts.getKrollDict("data");
+	public void saveInBackground(Object[] args) {
+		if (args.length < 1) {
+			Log.e(LCAT,
+					"saveInBackground() needs one or two parameters: JSobject with payload and optional calback");
+			return;
+		}
+		KrollDict payload = (KrollDict) args[0];
+
 		ParseObject parseObject = ParseObject.create(CLASSNAME);
-		parseObject.put("userId", ParseUser.getCurrentUser().getObjectId());
-		parseObject.put("body", opts);
+		if (ParseUser.getCurrentUser() != null) {
+			parseObject.put("userId", ParseUser.getCurrentUser().getObjectId());
+		}
+		for (String key : payload.keySet()) {
+			parseObject.put(key, payload.get(key));
+		}
 		parseObject.saveInBackground(new SaveCallback() {
 			@Override
 			public void done(ParseException e) {
-				if (e == null) {
-					krollCallbacks.onSuccess.call(getKrollObject(),
-							new KrollDict());
-				} else {
-					krollCallbacks.onError.call(getKrollObject(),
-							new KrollDict());
+				KrollFunction callback = null;
+				if (args.length > 1) {
+					callback = (KrollFunction) args[1];
 				}
+				KrollDict res = new KrollDict();
+				if (e == null) {
+					res.put("success", true);
+				} else {
+					res.put("error", e.getMessage());
+					res.put("success", false);
+				}
+				if (callback != null)
+					callback.call(getKrollObject(), res);
 			}
 		});
 	}

@@ -156,7 +156,7 @@ user.signUpInBackground(function(e) {
 This call will asynchronously create a new user in your Parse App. Before it does this, it checks to make sure that both the username and email are unique.
 
 ```javascript
-user.logInInBackground("joestevens", "secret123", function(){});
+user.loginInBackground("joestevens", "secret123", function(){});
 ```
 If the credentials are correct, the ParseUser will be passed back accordingly. You can now access the cached current user for your application at any time in order to determine the session status:
 
