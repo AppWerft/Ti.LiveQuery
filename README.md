@@ -141,7 +141,7 @@ var user = LQ.createParseUser({
 	email : "x@y.com"
 });
 // Set custom properties
-user.set("phone", "650-253-0000");
+user.set("phone", "+49 40 60812460");
 // Invoke signUpInBackground
 user.signUpInBackground(function(e) {
 	if (e.success) {
@@ -155,59 +155,30 @@ user.signUpInBackground(function(e) {
 ```
 This call will asynchronously create a new user in your Parse App. Before it does this, it checks to make sure that both the username and email are unique.
 
+```javascript
+user.logInInBackground("joestevens", "secret123", function(){});
+```
+If the credentials are correct, the ParseUser will be passed back accordingly. You can now access the cached current user for your application at any time in order to determine the session status:
 
+```javascript
+var user = LQ.getCurrentUser();
+if (user != null) {
+  // do stuff with the user
+} else {
+  // show the signup or login screen
+}
+```
+Alternativly:
 
-
+```javascript
 Parse.loginAnonymous({
 	onsuccess : WorkingWithParse,
 	onerror : function(){}
 });
-Parse.login({
-	email: "putin@gulag.org",
-	password : "KGB",
-	onsuccess : WorkingWithParse,
-	onerror : function(){}
-});
-Parse.logout();
-
-function WorkingWithParse() {
-	var bird = Parse.createObject("Bird");
-	bird.saveObject({
-		data : {
-			age : 2,
-			color : "red",
-			name : "Rotkehlchen"
-		},
-		onsuccess : function() {},
-		onerror : function(){}
-	});
-	bird.saveObject({
-		data : {
-			age : 5,
-			color : "blue",
-			name : "Blaumeise"
-		}
-		onsuccess : function() {},
-		onerror : function(){}
-	});
-	
-	var query = Parse.createQuery({
-		name : "Bird",
-		query : "age>1,color==brown,orderby desc age"
-	});
-	
-	// pull request:
-	query.findObject({
-		onload : function() {},
-		onerror : function(){}
-	});
-	
-	// live request:
-	bird.registerQuery(query,{
-		onevent : function() {},
-		onerror : function(){}
-	});
-	bird.unregisterQuery(query);
-}
-
 ```
+and in the end:
+
+```javascript
+LQ.logout();
+```
+
