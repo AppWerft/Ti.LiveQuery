@@ -78,6 +78,23 @@ public class ParselivequeryModule extends KrollModule {
 	public static final int INTERCEPTOR_LEVEL_NONE = HttpLoggingInterceptor.Level.NONE
 			.ordinal();
 
+	@Kroll.constant
+	public static final int ACCOUNT_ALREADY_LINKED = com.parse.ParseException.ACCOUNT_ALREADY_LINKED;
+	@Kroll.constant
+	public static final int CONNECTION_FAILED = com.parse.ParseException.CONNECTION_FAILED;
+	@Kroll.constant
+	public static final int EMAIL_MISSING = com.parse.ParseException.EMAIL_MISSING;
+	@Kroll.constant
+	public static final int EMAIL_NOT_FOUND = com.parse.ParseException.EMAIL_NOT_FOUND;
+	@Kroll.constant
+	public static final int EMAIL_TAKEN = com.parse.ParseException.EMAIL_TAKEN;
+	@Kroll.constant
+	public static final int INVALID_EMAIL_ADDRESS = com.parse.ParseException.INVALID_EMAIL_ADDRESS;
+	@Kroll.constant
+	public static final int USERNAME_TAKEN = com.parse.ParseException.USERNAME_TAKEN;
+	@Kroll.constant
+	public static final int PASSWORD_MISSING = com.parse.ParseException.PASSWORD_MISSING;
+
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
 	public static final String QUERY = "query";

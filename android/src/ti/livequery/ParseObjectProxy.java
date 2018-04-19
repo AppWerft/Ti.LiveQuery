@@ -71,6 +71,7 @@ public class ParseObjectProxy extends KrollProxy {
 					res.put("success", true);
 				} else {
 					res.put("error", e.getMessage());
+					res.put("code", e.getCode());
 					res.put("success", false);
 				}
 				if (callback != null)
