@@ -169,7 +169,10 @@ user.signUpInBackground(function(e) {
 This call will asynchronously create a new user in your Parse App. Before it does this, it checks to make sure that both the username and email are unique.
 
 ```javascript
-user.loginInBackground("joestevens", "secret123", function(){});
+LQ.loginInBackground("joestevens", "secret123", function(e){
+	console.log(e);
+	// returns success, error, user
+});
 ```
 If the credentials are correct, the ParseUser will be passed back accordingly. You can now access the cached current user for your application at any time in order to determine the session status:
 
@@ -177,14 +180,16 @@ If the credentials are correct, the ParseUser will be passed back accordingly. Y
 var user = LQ.getCurrentUser();
 if (user != null) {
   // do stuff with the user
+  user.set("phone","+494060812460");
 } else {
+	
   // show the signup or login screen
 }
 ```
 Alternativly:
 
 ```javascript
-Parse.loginAnonymous({
+LQ.loginAnonymous({
 	onsuccess : WorkingWithParse,
 	onerror : function(){}
 });

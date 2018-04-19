@@ -279,21 +279,31 @@ public class ParselivequeryModule extends KrollModule {
 		});
 	}
 
+	private void handleLoginResult() {
+
+	}
+
 	@Kroll.method
-	void loginAnonymous(KrollDict opts) {
-		if (client == null)
-			return;
-		final KrollCallbacks kcb = new KrollCallbacks(opts);
+	void loginAnonymous(@Kroll.argument(optional = true) Object param) {
 		ParseAnonymousUtils.logIn(new LogInCallback() {
 			@Override
 			public void done(ParseUser user, ParseException e) {
+				if (param == null || !(param instanceof KrollFunction))
+					return;
 				KrollDict res = new KrollDict();
-				if (e != null) {
-					res.put("user", user.toString());
-					kcb.onSuccess.call(getKrollObject(), res);
+				if (user != null) {
+					ParseUserProxy userProxy = new ParseUserProxy();
+					userProxy.setUser(user);
+					res.put("success", true);
+					res.put("user", userProxy);
+
 				} else {
-					kcb.onError.call(getKrollObject(), res);
+					res.put("success", false);
+					res.put("code", e.getCode());
+					res.put("error", e.getMessage());
+
 				}
+				((KrollFunction) param).call(getKrollObject(), res);
 			}
 		});
 	}
@@ -301,5 +311,47 @@ public class ParselivequeryModule extends KrollModule {
 	@Kroll.method
 	public void clearAllCachedResults() {
 		ParseQuery.clearAllCachedResults();
+	}
+
+	@Kroll.method
+	public ParseUserProxy getCurrentUser() {
+		if (ParseUser.getCurrentUser() != null) {
+			ParseUserProxy userProxy = new ParseUserProxy();
+			return userProxy.setUser(ParseUser.getCurrentUser());
+		} else
+			return null;
+	}
+
+	@Kroll.method
+	public void logInInBackground(Object[] args) {
+		if (args.length < 2) {
+			Log.e(LCAT,
+					"logInInBackground needs two or three paramters: login,password and optional a callback");
+			return;
+		}
+		ParseUser.logInInBackground((String) args[0], (String) args[1],
+				new LogInCallback() {
+					public void done(ParseUser user, ParseException e) {
+						if (args.length < 3)
+							return;
+						KrollDict res = new KrollDict();
+						if (user != null) {
+							ParseUserProxy userProxy = new ParseUserProxy();
+							userProxy.setUser(user);
+							res.put("success", true);
+							res.put("user", userProxy);
+
+						} else {
+							res.put("success", false);
+							res.put("code", e.getCode());
+							res.put("error", e.getMessage());
+
+						}
+						if (args.length > 2 && args[2] instanceof KrollFunction)
+							((KrollFunction) args[2]).call(getKrollObject(),
+									res);
+					}
+				});
+
 	}
 }

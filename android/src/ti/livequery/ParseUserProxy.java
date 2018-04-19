@@ -5,6 +5,7 @@ import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
+import org.appcelerator.kroll.common.Log;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -38,6 +39,11 @@ public class ParseUserProxy extends KrollProxy {
 				user.setEmail(opts.getString("email"));
 
 		}
+	}
+
+	public ParseUserProxy setUser(ParseUser user) {
+		this.user = user;
+		return this;
 	}
 
 	@Kroll.method
