@@ -19,7 +19,7 @@ import com.parse.SubscriptionHandling;
 
 // This proxy can be created by calling Parselivequery.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = ParselivequeryModule.class)
-public class ObjectProxy extends KrollProxy {
+public class ParseObjectProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "PLQ";
 
@@ -27,7 +27,7 @@ public class ObjectProxy extends KrollProxy {
 	private String CLASSNAME;
 
 	// empty Constructor
-	public ObjectProxy() {
+	public ParseObjectProxy() {
 		super();
 	}
 
@@ -43,7 +43,7 @@ public class ObjectProxy extends KrollProxy {
 
 	// save to parse
 	@Kroll.method
-	public void saveObject(KrollDict opts) {
+	public void saveInBackground(KrollDict opts) {
 		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
 		KrollDict data = opts.getKrollDict("data");
 		ParseObject parseObject = ParseObject.create(CLASSNAME);

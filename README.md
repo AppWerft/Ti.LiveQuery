@@ -69,17 +69,95 @@ Returns a Client
 ## Methods of ParseObject
 
 
- 
-## Use the module
+## Initializing the module
 
 ```javascript
-var Parse = require("de.appwerft.parselivequery");
+var Parse = require("ti.livequery");
 
-Parse.setEndpoint({
-	uri :"wss://myparseinstance.com"), 
-	applicationId : APPLICATION_ID
-	clientKey : CLIENT_KEY
+// Use for troubleshooting -- remove this line for production
+Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
+
+// Use for monitoring Parse  traffic        
+// Can be INTERCEPTOR_LEVEL_BODY, INTERCEPTOR_LEVEL_HEADERS (see constants)
+Parse.setHttpLoggingInterceptorLevel(Parse.INTERCEPTOR_LEVEL_BODY)
+ 
+// set applicationId, and server server based on the values in the sever (i.e. Heroku) settings.
+// clientKey is not needed unless explicitly configured
+// any network interceptors must be added with the Configuration Builder given this syntax
+Parse.initialize({
+	applicationId : "myAppId", // should correspond to APP_ID env variable
+    clientKey : null,  // set explicitly unless clientKey is explicitly configured on Parse server
+    uri : "https://my-parse-app-url.herokuapp.com/parse/"
+    });
+```
+We also need to make sure to set the application instance above as the android:name for the application within the AndroidManifest.xml. This change in the manifest determines which application class is instantiated when the app is launched and also adding the application ID metadata tag:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.parsetododemo"
+    android:versionCode="1"
+    android:versionName="1.0" >
+    <application
+        <!-- other attributes here -->
+        android:name=".ParseApplication">
+    </application>
+</manifest>
+```
+### Setup network permissions
+
+We also need to add a few important network permissions to the AndroidManifest.xml:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.parsetododemo"
+    android:versionCode="1"
+    android:versionName="1.0" >
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+</manifest>
+```
+### Testing Parse Client
+
+```javascript
+Parse.initialize(...);
+var testObject = Parse.createParseObject("TestObject");
+testObject.saveInBackground({
+		foo : "bar"
+	},
+	function(event){
+		console.log(event);
+	})
 });	
+```
+### Working with Users
+
+```javascript
+// Create the ParseUser
+var user = LQ.createParseUser({
+	username : "joestevens",
+	password : "verysecret",
+	email : "x@y.com"
+});
+// Set custom properties
+user.set("phone", "650-253-0000");
+// Invoke signUpInBackground
+user.signUpInBackground(function(e) {
+	if (e.success) {
+	   // Hooray! Let them use the app now.
+    } else {
+      // Sign up didn't succeed. Look at the ParseException
+      // to figure out what went wrong
+    }
+
+});
+```
+This call will asynchronously create a new user in your Parse App. Before it does this, it checks to make sure that both the username and email are unique.
+
+
+
+
 Parse.loginAnonymous({
 	onsuccess : WorkingWithParse,
 	onerror : function(){}
