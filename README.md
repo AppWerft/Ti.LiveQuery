@@ -1,4 +1,4 @@
-# Ti.ParseLiveQuery
+# Ti.LiveQuery
 
 This is the Titanium module for [ParseLiveQuery](https://github.com/parse-community/ParseLiveQuery-Android)
 
@@ -34,52 +34,6 @@ The module is heavy WIP and not ready for production.
 * PASSWORD\_MISSING
 * PASSWORD\_TAKEN
  
-## Methods 
-
-### initialize(dictionary);
-* applicationId (String)
-* clientKey (String)
-* server (URL/Endpoint)
-* localDatastoreEnabled (true/false)
- 
-### setHttpLoggingInterceptorLevel(int)
- 
-see constants above
-
-### setLoggingLevel(int)
-see constants above
- 
-### createParseObject(classmame)
-Returns an ParseObject  
- 
-### createClient(dictionary)
- 
-* applicationId (String)
-* clientKey (String)
-* server (URL/Endpoint)
-
-Returns a Client
-
-## Method of client
-
-### reconnect()
-
-### disconnect()
-
-### connectIfNeeded()
-
-### login(dictionary)
-* email
-* password
-* onsuccess()
-* onerror() 
-
-### loginAnonymous(dictionary)
-* onsuccess()
-* onerror()
-
-
-## Methods of ParseObject
 
 
 ## Initializing the module
@@ -200,3 +154,35 @@ and in the end:
 LQ.logout();
 ```
 
+## Methods 
+
+### initialize(dictionary);
+* applicationId (String)
+* clientKey (String)
+* uri (URL/Endpoint)
+* localDatastoreEnabled (true/false)
+ 
+### setHttpLoggingInterceptorLevel(int)
+ 
+see constants above
+
+### setLoggingLevel(int)
+see constants above
+ 
+### createParseObject(classmame)
+Returns an ParseObject  
+ 
+
+### reconnect()
+
+### disconnect()
+
+### connectIfNeeded()
+
+
+
+### loginAnonymous(CALLBACKFUNCTION)
+
+### logInInBackground(USERNAME,PASSWORD,CALLBACKFUNCTION)
+
+## Methods of ParseObject
