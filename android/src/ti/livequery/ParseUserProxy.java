@@ -26,6 +26,11 @@ public class ParseUserProxy extends KrollProxy {
 		super();
 	}
 
+	public ParseUserProxy(ParseUser user) {
+		super();
+		this.user = user;
+	}
+
 	// constructor parameter import:
 	@Override
 	public void handleCreationArgs(KrollModule createdInModule, Object[] args) {
@@ -51,24 +56,34 @@ public class ParseUserProxy extends KrollProxy {
 		user.put(key, value);
 	}
 
+	@Kroll.method
+	public KrollDict getUser() {
+		KrollDict res = new KrollDict();
+		user.put("createdAt", user.getCreatedAt().toString());
+		user.put("updatedAt", user.getUpdatedAt().toString());
+		user.put("email", user.getEmail());
+		user.put("username", user.getUsername());
+		return res;
+	}
+
 	// save to parse
 	@Kroll.method
 	public void signUpInBackground(
-			@Kroll.argument(optional = true) KrollFunction callback) {
+			@Kroll.argument(optional = true) final KrollFunction callback) {
 		user.signUpInBackground(new SignUpCallback() {
 			public void done(ParseException e) {
 				KrollDict res = new KrollDict();
 				if (e == null) {
 					res.put("success", true);
+					res.put("user", getUser());
 				} else {
-					res.put("error", e.getMessage());
-					res.put("code", e.getCode());
-					res.put("success", true);
+					res.put(ParselivequeryModule.ERROR, e.getMessage());
+					res.put(ParselivequeryModule.CODE, e.getCode());
+					res.put(ParselivequeryModule.SUCCESS, true);
 				}
 				if (callback != null)
 					callback.call(getKrollObject(), res);
 			}
 		});
 	}
-
 }

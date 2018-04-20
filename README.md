@@ -85,19 +85,56 @@ We also need to add a few important network permissions to the AndroidManifest.x
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 </manifest>
 ```
-### Testing Parse Client
+### Saving ParseObjects
 
 ```javascript
 Parse.initialize(...);
-var testObject = Parse.createParseObject("TestObject");
-testObject.saveInBackground({
-		foo : "bar"
+var Cat = Parse.createParseObject("Cat");
+Cat.saveInBackground({
+		tail : "black",
+		legs : 4
 	},
 	function(event){
 		console.log(event);
 	})
 });	
 ```
+
+### Querying ParseObjects
+
+### Objects By Id
+
+If you have the objectId, you can retrieve the whole ParseObject using a ParseQuery:
+
+```javascript
+LQ.createParseQuery("Cat").getInBackground("aFuEsvjoHt",function(e){
+	console.log(e)
+})
+```
+### Objects By Query Conditions
+
+```javascript
+var query = LQ.createParseQuery({
+	name : "Cat",
+	query : "tail==black,age>3,orderby age asc"
+});
+query.findInBackground(function(e){
+	console.log(e)
+})
+```
+### Objects Created by a particular user
+
+```javascript
+var query = LQ.createParseQuery({
+	name : "Cat",
+	query : "owner==" + LQ.getCurrentUser()
+});
+query.findInBackground(function(e){
+	console.log(e)
+})
+
+```
+
 ### Working with Users
 
 ```javascript
@@ -112,6 +149,7 @@ user.set("phone", "+49 40 60812460");
 // Invoke signUpInBackground
 user.signUpInBackground(function(e) {
 	if (e.success) {
+	   
 	   // Hooray! Let them use the app now.
     } else {
       // Sign up didn't succeed. Look at the ParseException

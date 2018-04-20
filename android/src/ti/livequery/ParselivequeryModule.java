@@ -96,8 +96,13 @@ public class ParselivequeryModule extends KrollModule {
 	public static final int PASSWORD_MISSING = com.parse.ParseException.PASSWORD_MISSING;
 
 	// Standard Debugging variables
-	private static final String LCAT = "PLQ";
+	static final String LCAT = "ParseLQ";
 	public static final String QUERY = "query";
+	public static final String SUCCESS = "success";
+	public static final String ERROR = "error";
+	public static final String CODE = "code";
+	public static final String NAME = "name";
+
 	ParseLiveQueryClient client;
 	Context ctx;
 
@@ -284,7 +289,7 @@ public class ParselivequeryModule extends KrollModule {
 	}
 
 	@Kroll.method
-	void loginAnonymous(@Kroll.argument(optional = true) Object param) {
+	void loginAnonymous(@Kroll.argument(optional = true) final Object param) {
 		ParseAnonymousUtils.logIn(new LogInCallback() {
 			@Override
 			public void done(ParseUser user, ParseException e) {
@@ -316,14 +321,15 @@ public class ParselivequeryModule extends KrollModule {
 	@Kroll.method
 	public ParseUserProxy getCurrentUser() {
 		if (ParseUser.getCurrentUser() != null) {
-			ParseUserProxy userProxy = new ParseUserProxy();
-			return userProxy.setUser(ParseUser.getCurrentUser());
+			ParseUserProxy userProxy = new ParseUserProxy(
+					ParseUser.getCurrentUser());
+			return userProxy;
 		} else
 			return null;
 	}
 
 	@Kroll.method
-	public void logInInBackground(Object[] args) {
+	public void logInInBackground(final Object[] args) {
 		if (args.length < 2) {
 			Log.e(LCAT,
 					"logInInBackground needs two or three paramters: login,password and optional a callback");
