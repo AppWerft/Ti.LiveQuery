@@ -192,6 +192,23 @@ and in the end:
 LQ.logout();
 ```
 
+### Live Queries
+
+```javascript
+var query = LQ.createParseQuery({
+	name : "Cat",
+	query : "color==yellow,age>1"
+});
+query.subscribe(function(e){
+	console.log(e)
+})
+
+// maybe later:
+query.unsubscribe();
+```
+
+
+
 ## Methods 
 
 ### initialize(dictionary);

@@ -78,53 +78,6 @@ public class ParseObjectProxy extends KrollProxy {
 		});
 	}
 
-	@Kroll.method
-	public void registerObject(ParseQueryProxy query, KrollDict opts) {
-		// final ParseQuery<ParseObject> parseObject;
-
-		// importing of callbacks:
-		final KrollCallbacks krollCallbacks = new KrollCallbacks(opts);
-		// importing of query proxy
-		if (opts.containsKeyAndNotNull(ParselivequeryModule.QUERY)) {
-			Object o = opts.get(ParselivequeryModule.QUERY);
-			if (o instanceof ParseQueryProxy) {
-				ParseQuery<ParseObject> parseQuery = ((ParseQueryProxy) o)
-						.getQuery();
-				registerHandler(parseQuery, krollCallbacks);
-			}
-		}
-	}
-
-	private void registerHandler(ParseQuery<ParseObject> query,
-			final KrollCallbacks krollCallbacks) {
-		ParseObject parseObject = ParseObject.create(CLASSNAME);
-		ParseLiveQueryClient client = ParseLiveQueryClient.Factory.getClient();
-		SubscriptionHandling<ParseObject> handling = client.subscribe(query);
-
-		handling.handleEvents(new SubscriptionHandling.HandleEventsCallback<ParseObject>() {
-			@Override
-			public void onEvents(ParseQuery<ParseObject> query,
-					SubscriptionHandling.Event event, ParseObject object) {
-				KrollDict kd = new KrollDict();
-				kd.put("event", event); // int
-				kd.put("data", parseObj2KrollDict(object)); // int
-				if (krollCallbacks.onEvent != null) {
-					krollCallbacks.onEvent.call(getKrollObject(), kd);
-				}
-			}
-		});
-	}
-
-	@Kroll.method
-	public void unregisterObject(ParseQueryProxy query, KrollDict opts) {
-		ParseQuery<ParseObject> parseQuery = ((ParseQueryProxy) query)
-				.getQuery();
-
-		ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory
-				.getClient();
-		parseLiveQueryClient.unsubscribe(parseQuery);
-	}
-
 	private KrollDict parseObj2KrollDict(ParseObject object) {
 		KrollDict kd = new KrollDict();
 		kd.put("data", object.getJSONObject("data"));

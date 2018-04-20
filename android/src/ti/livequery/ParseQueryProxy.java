@@ -3,6 +3,7 @@ package ti.livequery;
 import java.util.List;
 
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollFunction;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
@@ -10,14 +11,17 @@ import org.appcelerator.kroll.common.Log;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SubscriptionHandling;
 
 @Kroll.proxy(creatableInModule = ParselivequeryModule.class)
 public class ParseQueryProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = ParselivequeryModule.LCAT;
 	public ParseQuery<ParseObject> query;
+	String CLASSNAME = null;
 
 	// Constructor
 	public ParseQueryProxy() {
@@ -35,7 +39,7 @@ public class ParseQueryProxy extends KrollProxy {
 
 	@Override
 	public void handleCreationArgs(KrollModule createdInModule, Object[] args) {
-		String CLASSNAME = null;
+
 		String queryString;
 		if (args[0] instanceof KrollDict) {
 			KrollDict opts = (KrollDict) args[0];
@@ -130,6 +134,33 @@ public class ParseQueryProxy extends KrollProxy {
 
 	}
 
+	@Kroll.method
+	public void subscribe(
+			@Kroll.argument(optional = true) final KrollFunction callback) {
+		ParseLiveQueryClient client = ParseLiveQueryClient.Factory.getClient();
+		SubscriptionHandling<ParseObject> handling = client.subscribe(query);
+		handling.handleEvents(new SubscriptionHandling.HandleEventsCallback<ParseObject>() {
+			@Override
+			public void onEvents(ParseQuery<ParseObject> query,
+					SubscriptionHandling.Event event, ParseObject object) {
+				KrollDict kd = new KrollDict();
+				kd.put("event", event.ordinal()); // int
+				kd.put("eventName", event.name());
+				kd.put("data", parseObj2KrollDict(object)); // int
+				if (callback != null) {
+					callback.call(getKrollObject(), kd);
+				}
+			}
+		});
+	}
+
+	@Kroll.method
+	public void unsubscribe() {
+		ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory
+				.getClient();
+		parseLiveQueryClient.unsubscribe(query);
+	}
+
 	private String[] splitString(String foo) {
 		String s = "This is a sample sentence.";
 		String[] bar = s.split("\\s+");
@@ -137,5 +168,11 @@ public class ParseQueryProxy extends KrollProxy {
 			bar[i] = bar[i].replaceAll("[^\\w]", "");
 		}
 		return bar;
+	}
+
+	private KrollDict parseObj2KrollDict(ParseObject object) {
+		KrollDict kd = new KrollDict();
+		kd.put("data", object.getJSONObject("data"));
+		return kd;
 	}
 }
